@@ -18,30 +18,38 @@ function SocialLinks() {
         href={`https://bsky.app/profile/${DID}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className="p-2 rounded-lg
+                   hover:bg-purple-50 dark:hover:bg-purple-900/10
+                   transition-colors duration-200"
         aria-label="Bluesky Profile"
       >
         <svg
           width={16}
           height={16}
           viewBox="0 0 24 24"
-          className="fill-gray-600 dark:fill-gray-400"
+          className="fill-gray-600 dark:fill-gray-400
+                     hover:fill-purple-700 dark:hover:fill-purple-300
+                     transition-colors duration-200"
         >
           <path d={BlueskyIcon.path} />
         </svg>
       </a>
       <a
-        href="https://github.com/austinlparker"
+        href={`https://github.com/austinlparker`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className="p-2 rounded-lg
+                   hover:bg-purple-50 dark:hover:bg-purple-900/10
+                   transition-colors duration-200"
         aria-label="GitHub Profile"
       >
         <svg
           width={16}
           height={16}
           viewBox="0 0 24 24"
-          className="fill-gray-600 dark:fill-gray-400"
+          className="fill-gray-600 dark:fill-gray-400
+                     hover:fill-purple-700 dark:hover:fill-purple-300
+                     transition-colors duration-200"
         >
           <path d={GithubIcon.path} />
         </svg>
@@ -50,14 +58,18 @@ function SocialLinks() {
         href="/rss"
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className="p-2 rounded-lg
+                   hover:bg-purple-50 dark:hover:bg-purple-900/10
+                   transition-colors duration-200"
         aria-label="RSS Feed"
       >
         <svg
           width={16}
           height={16}
           viewBox="0 0 24 24"
-          className="fill-gray-600 dark:fill-gray-400"
+          className="fill-gray-600 dark:fill-gray-400
+                     hover:fill-purple-700 dark:hover:fill-purple-300
+                     transition-colors duration-200"
         >
           <path d={RssIcon.path} />
         </svg>

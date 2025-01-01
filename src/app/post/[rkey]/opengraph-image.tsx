@@ -118,7 +118,7 @@ export default async function OpenGraphImage({
               <div
                 style={{
                   fontSize: "32px",
-                  color: "#4ade80",
+                  color: "#9333ea",
                   fontWeight: 700,
                 }}
               >
@@ -152,7 +152,7 @@ export default async function OpenGraphImage({
                   gap: "8px",
                 }}
               >
-                <span style={{ color: "#4ade80" }}>$</span>
+                <span style={{ color: "#9333ea" }}>$</span>
                 <span>whoami</span>
               </div>
               <div

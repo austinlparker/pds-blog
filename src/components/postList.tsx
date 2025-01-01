@@ -14,10 +14,10 @@ export async function PostList() {
           <li key={rkey} className="group">
             <Link
               href={`/post/${rkey}`}
-              className="block -mx-2 p-2 rounded transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="block -mx-2 p-2 rounded transition-colors hover:bg-purple-50 dark:hover:bg-purple-900/10"
             >
               <div className="flex items-baseline justify-between gap-4">
-                <span className="text-green-600 dark:text-green-400">❯</span>
+                <span className="text-purple-700 dark:text-purple-300">❯</span>
                 <span className="flex-1 font-kode font-bold">
                   {post.value.title}
                 </span>
