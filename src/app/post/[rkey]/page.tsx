@@ -32,30 +32,9 @@ export async function generateMetadata({
   const post = await getPost(rkey);
 
   return {
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_URL || "http://localhost:3000",
-    ),
-    title: `${post.value.title}`,
+    title: post.value.title + " — aparker.io",
     authors: [{ name: "Austin", url: `https://bsky.app/profile/${DID}` }],
-    description: post.value.content.slice(0, 160),
-    openGraph: {
-      title: post.value.title,
-      description: post.value.content.slice(0, 160),
-      type: "article",
-      images: [
-        {
-          url: `/post/${rkey}/opengraph-image`,
-          width: 1200,
-          height: 630,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.value.title,
-      description: post.value.content.slice(0, 160),
-      images: [`/post/${rkey}/opengraph-image`],
-    },
+    description: `${post.value.createdAt} · ${readingTime(post.value.content).text}`,
   };
 }
 
