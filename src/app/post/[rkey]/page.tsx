@@ -1,13 +1,12 @@
 import { ArrowLeft } from "lucide-react";
-import Markdown from "react-markdown";
+import Markdown, { Components } from "react-markdown";
 import { type Metadata } from "next";
 import Link from "next/link";
 import { Code } from "bright";
 import readingTime from "reading-time";
 import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
-import { defaultSchema } from "rehype-sanitize";
 
 import { Terminal } from "@/components/terminal";
 import { BlueskyPostEmbed } from "@/components/bluesky-embed";
@@ -17,10 +16,109 @@ import { DID } from "@/lib/client";
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
-Code.theme = {
+// Move Code theme configuration to a separate constant
+const CODE_THEME_CONFIG = {
   dark: "github-dark",
   light: "github-light",
   lightSelector: 'html[class="light"]',
+} as const;
+
+Code.theme = CODE_THEME_CONFIG;
+
+// Separate sanitize schema configuration
+const SANITIZE_SCHEMA = {
+  ...defaultSchema,
+  attributes: {
+    ...defaultSchema.attributes,
+    blockquote: [
+      ...(defaultSchema.attributes?.blockquote ?? []),
+      "dataBlueskyUri",
+      "dataBlueskyCid",
+    ],
+  },
+} satisfies typeof defaultSchema;
+
+// Separate markdown components configuration
+const MARKDOWN_COMPONENTS: Components = {
+  code({ inline, className, children, ...props }) {
+    const match = /language-(\w+)/.exec(className || "");
+    const code = String(children).replace(/\n$/, "");
+
+    if (inline) {
+      return (
+        <code
+          className="font-mono text-green-600 dark:text-green-400"
+          {...props}
+        >
+          {children}
+        </code>
+      );
+    }
+
+    return match ? (
+      <Code
+        lang={match[1]}
+        {...props}
+        className="!mt-4 !text-sm !rounded-lg !border !border-gray-200 !dark:border-gray-700"
+      >
+        {code}
+      </Code>
+    ) : (
+      <code
+        className="block p-4 bg-gray-50 dark:bg-gray-800 rounded-lg"
+        {...props}
+      >
+        {children}
+      </code>
+    );
+  },
+  // Simplified heading components
+  h1: ({ children }) => <h1>{children}</h1>,
+  h2: ({ children }) => <h2>{children}</h2>,
+  h3: ({ children }) => <h3>{children}</h3>,
+  h4: ({ children }) => <h4>{children}</h4>,
+  h5: ({ children }) => <h5>{children}</h5>,
+  h6: ({ children }) => <h6>{children}</h6>,
+  a: ({ href, ...props }) => (
+    <a
+      href={href}
+      className="text-green-600 dark:text-green-400 border-b border-green-200 dark:border-green-800 hover:border-green-600 dark:hover:border-green-400 transition-colors"
+      {...props}
+    />
+  ),
+  blockquote: (props) =>
+    "data-bluesky-uri" in props ? (
+      <BlueskyPostEmbed uri={props["data-bluesky-uri"] as string} />
+    ) : (
+      <blockquote
+        {...props}
+        className="border-l-4 border-green-200 dark:border-green-800 pl-4 italic text-gray-600 dark:text-gray-300"
+      />
+    ),
+  sup: ({ children }) => (
+    <sup className="text-xs text-green-600 dark:text-green-400">{children}</sup>
+  ),
+  section: ({ children, className }) => {
+    if (className === "footnotes") {
+      return (
+        <section className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-green-600 dark:text-green-400 mb-4">
+            Footnotes
+          </h2>
+          {children}
+        </section>
+      );
+    }
+    return <section>{children}</section>;
+  },
+};
+
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 };
 
 export async function generateMetadata({
@@ -31,19 +129,12 @@ export async function generateMetadata({
   const { rkey } = await params;
   const post = await getPost(rkey);
 
-  const formattedDate = new Date(post.value.createdAt!).toLocaleDateString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    },
-  );
-
   return {
-    title: post.value.title + " — aparker.io",
+    title: `${post.value.title} — aparker.io`,
     authors: [{ name: "Austin", url: `https://bsky.app/profile/${DID}` }],
-    description: `${formattedDate} · ${readingTime(post.value.content).text}`,
+    description: `${formatDate(post.value.createdAt!)} · ${
+      readingTime(post.value.content).text
+    }`,
   };
 }
 
@@ -70,112 +161,22 @@ export default async function PostPage({
             </Link>
 
             <div className="space-y-1">
-              <h1 className="text-2xl font-kode font-bold">
-                {post.value.title}
-              </h1>
+              <h1>{post.value.title}</h1>
               <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                 <time dateTime={post.value.createdAt}>
-                  {new Date(post.value.createdAt!).toLocaleDateString()}
+                  {formatDate(post.value.createdAt!)}
                 </time>
                 <span>{stats.text}</span>
               </div>
             </div>
           </header>
 
-          {/* Content */}
           <Markdown
             remarkPlugins={[remarkGfm]}
             remarkRehypeOptions={{ allowDangerousHtml: true }}
-            rehypePlugins={[
-              rehypeRaw,
-              [
-                rehypeSanitize,
-                {
-                  ...defaultSchema,
-                  attributes: {
-                    ...defaultSchema.attributes,
-                    blockquote: [
-                      ...(defaultSchema.attributes?.blockquote ?? []),
-                      "dataBlueskyUri",
-                      "dataBlueskyCid",
-                    ],
-                  },
-                } satisfies typeof defaultSchema,
-              ],
-            ]}
+            rehypePlugins={[rehypeRaw, [rehypeSanitize, SANITIZE_SCHEMA]]}
             className="markdown-content"
-            components={{
-              code({ inline, className, children, ...props }) {
-                const match = /language-(\w+)/.exec(className || "");
-                const code = String(children).replace(/\n$/, "");
-
-                if (inline) {
-                  return (
-                    <code
-                      className="font-mono text-green-600 dark:text-green-400"
-                      {...props}
-                    >
-                      {children}
-                    </code>
-                  );
-                }
-
-                return match ? (
-                  <Code
-                    lang={match[1]}
-                    {...props}
-                    className="!mt-4 !text-sm !rounded-lg !border !border-gray-200 !dark:border-gray-700"
-                  >
-                    {code}
-                  </Code>
-                ) : (
-                  <code
-                    className="block p-4 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                    {...props}
-                  >
-                    {children}
-                  </code>
-                );
-              },
-              h1: (props) => <h1 {...props} />,
-              h2: (props) => <h2 {...props} />,
-              h3: (props) => <h3 {...props} />,
-              a: ({ href, ...props }) => (
-                <a
-                  href={href}
-                  className="text-green-600 dark:text-green-400 border-b border-green-200 dark:border-green-800 hover:border-green-600 dark:hover:border-green-400 transition-colors"
-                  {...props}
-                />
-              ),
-              blockquote: (props) =>
-                "data-bluesky-uri" in props ? (
-                  <BlueskyPostEmbed uri={props["data-bluesky-uri"] as string} />
-                ) : (
-                  <blockquote
-                    {...props}
-                    className="border-l-4 border-green-200 dark:border-green-800 pl-4 italic text-gray-600 dark:text-gray-300"
-                  />
-                ),
-              sup: ({ children }) => (
-                <sup className="text-xs text-green-600 dark:text-green-400">
-                  {children}
-                </sup>
-              ),
-              // Style the footnotes section
-              section: ({ children, className }) => {
-                if (className === "footnotes") {
-                  return (
-                    <section className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
-                      <h2 className="text-xl font-bold text-green-600 dark:text-green-400 mb-4">
-                        Footnotes
-                      </h2>
-                      {children}
-                    </section>
-                  );
-                }
-                return <section>{children}</section>;
-              },
-            }}
+            components={MARKDOWN_COMPONENTS}
           >
             {post.value.content}
           </Markdown>
@@ -188,12 +189,9 @@ export default async function PostPage({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                @{DID.split(":").pop()}
+                @aparker.io
               </Link>
-              <span>
-                Last modified:{" "}
-                {new Date(post.value.createdAt!).toLocaleDateString()}
-              </span>
+              <span>Last modified: {formatDate(post.value.createdAt!)}</span>
             </div>
           </footer>
         </div>

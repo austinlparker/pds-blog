@@ -7,11 +7,20 @@
     @apply antialiased;
   }
 
-  h1,
-  h2,
-  h3,
+  h1 {
+    @apply text-4xl font-kode font-bold text-green-600 dark:text-green-400;
+  }
+
+  h2 {
+    @apply text-3xl font-kode font-bold text-green-600 dark:text-green-400;
+  }
+
+  h3 {
+    @apply text-2xl font-kode font-bold text-green-600 dark:text-green-400;
+  }
+
   h4 {
-    @apply font-kode font-bold text-green-600 dark:text-green-400;
+    @apply text-xl font-kode font-bold text-green-600 dark:text-green-400;
   }
 
   /* Scrollbar styling */
@@ -45,15 +54,19 @@
     }
 
     & h1 {
-      @apply text-3xl mt-8 first:mt-0;
+      @apply text-4xl mt-8 first:mt-0 scroll-mt-20;
     }
 
     & h2 {
-      @apply text-2xl mt-8 pb-2 border-b border-gray-200 dark:border-gray-800;
+      @apply text-3xl mt-8 pb-2 border-b border-gray-200 dark:border-gray-800 scroll-mt-20;
     }
 
     & h3 {
-      @apply text-xl mt-6;
+      @apply text-2xl mt-6 scroll-mt-20;
+    }
+
+    & h4 {
+      @apply text-xl mt-6 scroll-mt-20;
     }
 
     /* Paragraphs */

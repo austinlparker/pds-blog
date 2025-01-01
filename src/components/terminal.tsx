@@ -11,6 +11,61 @@ interface TerminalProps {
   title?: string;
 }
 
+function SocialLinks() {
+  return (
+    <>
+      <a
+        href={`https://bsky.app/profile/${DID}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        aria-label="Bluesky Profile"
+      >
+        <svg
+          width={16}
+          height={16}
+          viewBox="0 0 24 24"
+          className="fill-gray-600 dark:fill-gray-400"
+        >
+          <path d={BlueskyIcon.path} />
+        </svg>
+      </a>
+      <a
+        href="https://github.com/austinlparker"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        aria-label="GitHub Profile"
+      >
+        <svg
+          width={16}
+          height={16}
+          viewBox="0 0 24 24"
+          className="fill-gray-600 dark:fill-gray-400"
+        >
+          <path d={GithubIcon.path} />
+        </svg>
+      </a>
+      <a
+        href="/rss"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        aria-label="RSS Feed"
+      >
+        <svg
+          width={16}
+          height={16}
+          viewBox="0 0 24 24"
+          className="fill-gray-600 dark:fill-gray-400"
+        >
+          <path d={RssIcon.path} />
+        </svg>
+      </a>
+    </>
+  );
+}
+
 export function Terminal({ children, title = "terminal" }: TerminalProps) {
   return (
     <div className="w-full max-w-4xl mx-auto overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800 shadow-lg">
@@ -30,56 +85,9 @@ export function Terminal({ children, title = "terminal" }: TerminalProps) {
           </span>
         </div>
 
-        {/* Social links and theme toggle */}
-        <div className="flex items-center gap-2">
-          <a
-            href={`https://bsky.app/profile/${DID}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            aria-label="Bluesky Profile"
-          >
-            <svg
-              width={16}
-              height={16}
-              viewBox="0 0 24 24"
-              className="fill-gray-600 dark:fill-gray-400"
-            >
-              <path d={BlueskyIcon.path} />
-            </svg>
-          </a>
-          <a
-            href="https://github.com/austinlparker"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            aria-label="GitHub Profile"
-          >
-            <svg
-              width={16}
-              height={16}
-              viewBox="0 0 24 24"
-              className="fill-gray-600 dark:fill-gray-400"
-            >
-              <path d={GithubIcon.path} />
-            </svg>
-          </a>
-          <a
-            href="/rss"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            aria-label="RSS Feed"
-          >
-            <svg
-              width={16}
-              height={16}
-              viewBox="0 0 24 24"
-              className="fill-gray-600 dark:fill-gray-400"
-            >
-              <path d={RssIcon.path} />
-            </svg>
-          </a>
+        {/* Social links and theme toggle - hidden on mobile */}
+        <div className="hidden md:flex items-center gap-2">
+          <SocialLinks />
           <div className="w-px h-6 bg-gray-200 dark:bg-gray-700" />
           <ThemeToggle />
         </div>
@@ -88,6 +96,13 @@ export function Terminal({ children, title = "terminal" }: TerminalProps) {
       {/* Content */}
       <div className="p-6 bg-white dark:bg-gray-900 min-h-[200px]">
         {children}
+      </div>
+
+      {/* Mobile social links and theme toggle - shown at bottom on mobile */}
+      <div className="md:hidden flex items-center justify-center gap-2 p-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+        <SocialLinks />
+        <div className="w-px h-6 bg-gray-200 dark:bg-gray-700" />
+        <ThemeToggle />
       </div>
     </div>
   );
