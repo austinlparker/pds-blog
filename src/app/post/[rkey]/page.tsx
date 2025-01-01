@@ -9,6 +9,7 @@ import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 
 import { Terminal } from "@/components/terminal";
+import { BlueskyPostEmbed } from "@/components/bluesky-embed";
 import { getPost, getPosts } from "@/lib/api";
 import { DID } from "@/lib/client";
 
@@ -140,12 +141,15 @@ export default async function PostPage({
                   {...props}
                 />
               ),
-              blockquote: (props) => (
-                <blockquote
-                  {...props}
-                  className="border-l-4 border-green-200 dark:border-green-800 pl-4 italic text-gray-600 dark:text-gray-300"
-                />
-              ),
+              blockquote: (props) =>
+                "data-bluesky-uri" in props ? (
+                  <BlueskyPostEmbed uri={props["data-bluesky-uri"] as string} />
+                ) : (
+                  <blockquote
+                    {...props}
+                    className="border-l-4 border-green-200 dark:border-green-800 pl-4 italic text-gray-600 dark:text-gray-300"
+                  />
+                ),
               sup: ({ children }) => (
                 <sup className="text-xs text-green-600 dark:text-green-400">
                   {children}
