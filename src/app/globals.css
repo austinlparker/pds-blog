@@ -2,20 +2,235 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  body {
+    @apply antialiased;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-kode font-bold text-green-600 dark:text-green-400;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .markdown-content {
+    @apply max-w-none space-y-6 text-gray-700 dark:text-gray-300;
+
+    /* Headings */
+    & h1,
+    & h2,
+    & h3,
+    & h4 {
+      @apply font-kode font-bold text-green-600 dark:text-green-400 scroll-mt-20;
+    }
+
+    & h1 {
+      @apply text-3xl mt-8 first:mt-0;
+    }
+
+    & h2 {
+      @apply text-2xl mt-8 pb-2 border-b border-gray-200 dark:border-gray-800;
+    }
+
+    & h3 {
+      @apply text-xl mt-6;
+    }
+
+    /* Paragraphs */
+    & p {
+      @apply leading-7;
+    }
+
+    /* Lists */
+    & ul,
+    & ol {
+      @apply my-8 ml-6 space-y-2;
+    }
+
+    & ul {
+      @apply list-disc;
+      & > li[class*="task-list-item"] {
+        @apply list-none -ml-4;
+      }
+    }
+
+    & ol {
+      @apply list-decimal;
+    }
+
+    & li {
+      @apply leading-7;
+
+      & > ul,
+      & > ol {
+        @apply my-2 ml-6; /* Nested lists */
+      }
+
+      &[class*="task-list-item"] {
+        @apply flex items-start gap-2;
+
+        & > input[type="checkbox"] {
+          @apply mt-1.5;
+        }
+      }
+    }
+
+    /* Links */
+    & a {
+      @apply text-green-600 dark:text-green-400
+             no-underline border-b border-green-200 dark:border-green-800
+             hover:border-green-600 dark:hover:border-green-400
+             transition-colors;
+    }
+
+    /* Inline code */
+    & :not(pre) > code {
+      @apply px-1.5 py-0.5 rounded inline
+               text-green-600 dark:text-green-400
+               bg-green-50 dark:bg-green-900/20
+               text-sm font-mono;
+    }
+
+    /* Code blocks */
+    & [data-bright] {
+      @apply my-6 rounded-lg;
+    }
+
+    /* Blockquotes */
+    & blockquote {
+      @apply pl-4 italic
+             border-l-4 border-gray-200 dark:border-gray-800
+             text-gray-600 dark:text-gray-400;
+    }
+
+    /* Images */
+    & img {
+      @apply rounded-lg border border-gray-200 dark:border-gray-800
+             my-6 max-w-full h-auto;
+    }
+
+    /* Tables */
+    & table {
+      @apply w-full my-6 border border-gray-200 dark:border-gray-800;
+
+      & th {
+        @apply bg-gray-50 dark:bg-gray-900
+               text-gray-900 dark:text-gray-100
+               font-mono p-2 text-left;
+      }
+
+      & td {
+        @apply border border-gray-200 dark:border-gray-800
+               p-2;
+      }
+    }
+
+    /* Horizontal rule */
+    & hr {
+      @apply border-gray-200 dark:border-gray-800 my-8;
+    }
+
+    /* Footnotes */
+    & .footnotes {
+      @apply text-sm text-gray-600 dark:text-gray-400
+             mt-16 pt-8 border-t border-gray-200 dark:border-gray-800;
+
+      & ol {
+        @apply list-decimal list-inside;
+      }
+
+      & p {
+        @apply inline;
+      }
+
+      & .footnote-backref {
+        @apply ml-1 no-underline border-none;
+      }
+    }
+
+    /* Task Lists */
+    & input[type="checkbox"] {
+      @apply mr-2;
+    }
+
+    /* Definition Lists */
+    & dl {
+      @apply my-6;
+    }
+
+    & dt {
+      @apply font-bold;
+    }
+
+    & dd {
+      @apply ml-6 mb-4;
+    }
+
+    /* Abbreviations */
+    & abbr {
+      @apply cursor-help border-dotted border-b;
+    }
+
+    /* Small text */
+    & small {
+      @apply text-sm text-gray-500 dark:text-gray-400;
+    }
+
+    /* Base spacing */
+    & > :first-child {
+      @apply mt-0;
+    }
+
+    & > :last-child {
+      @apply mb-0;
+    }
+  }
+}
+
+/* Terminal window text cursor animation */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.cursor::after {
+  content: "█";
+  @apply text-green-600 dark:text-green-400 animate-[blink_1s_infinite];
+}
+
+/* Container */
+.container {
+  @apply max-w-4xl mx-auto px-4;
+}
+
+/* Print styles */
+@media print {
+  .prose {
+    @apply max-w-none mx-0;
+  }
 }
