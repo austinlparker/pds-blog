@@ -31,10 +31,19 @@ export async function generateMetadata({
   const { rkey } = await params;
   const post = await getPost(rkey);
 
+  const formattedDate = new Date(post.value.createdAt!).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    },
+  );
+
   return {
     title: post.value.title + " — aparker.io",
     authors: [{ name: "Austin", url: `https://bsky.app/profile/${DID}` }],
-    description: `${post.value.createdAt} · ${readingTime(post.value.content).text}`,
+    description: `${formattedDate} · ${readingTime(post.value.content).text}`,
   };
 }
 
