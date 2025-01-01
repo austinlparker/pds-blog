@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   env: {
     PDS_URL: process.env.PDS_URL!,
     ACCOUNT_DID: process.env.ACCOUNT_DID!,
+    PURGE_PASSWORD: process.env.PURGE_PASSWORD!,
   },
   images: {
     domains: ["fonts.gstatic.com"],
