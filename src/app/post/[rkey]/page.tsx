@@ -7,6 +7,7 @@ import readingTime from "reading-time";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
+import { defaultSchema } from "rehype-sanitize";
 
 import { Terminal } from "@/components/terminal";
 import { BlueskyPostEmbed } from "@/components/bluesky-embed";
@@ -96,7 +97,24 @@ export default async function PostPage({
           {/* Content */}
           <Markdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeSanitize]}
+            remarkRehypeOptions={{ allowDangerousHtml: true }}
+            rehypePlugins={[
+              rehypeRaw,
+              [
+                rehypeSanitize,
+                {
+                  ...defaultSchema,
+                  attributes: {
+                    ...defaultSchema.attributes,
+                    blockquote: [
+                      ...(defaultSchema.attributes?.blockquote ?? []),
+                      "dataBlueskyUri",
+                      "dataBlueskyCid",
+                    ],
+                  },
+                } satisfies typeof defaultSchema,
+              ],
+            ]}
             className="markdown-content"
             components={{
               code({ inline, className, children, ...props }) {
