@@ -4,9 +4,17 @@ import { getPosts } from "@/lib/api";
 export async function PostList() {
   const { posts } = await getPosts({ limit: 100 });
 
+  // Sort posts by createdAt date in descending order
+  const sortedPosts = [...posts].sort((a, b) => {
+    return (
+      new Date(b.value.createdAt!).getTime() -
+      new Date(a.value.createdAt!).getTime()
+    );
+  });
+
   return (
     <ul className="space-y-4">
-      {posts.map((post) => {
+      {sortedPosts.map((post) => {
         const rkey = post.uri.split("/").pop()!;
         const date = new Date(post.value.createdAt!).toLocaleDateString();
 
