@@ -79,6 +79,12 @@ export default {
                 borderColor: "rgb(126 34 206)", // purple-700
               },
             },
+            img: {
+              borderRadius: "0.5rem",
+            },
+            "figure img": {
+              margin: "0 auto",
+            },
           },
         },
       },

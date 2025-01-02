@@ -1,6 +1,8 @@
 import { ArrowLeft } from "lucide-react";
+import React from "react";
 import Markdown, { Components } from "react-markdown";
 import { type Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Code } from "bright";
 import readingTime from "reading-time";
@@ -28,6 +30,14 @@ const SANITIZE_SCHEMA = {
   ...defaultSchema,
   attributes: {
     ...defaultSchema.attributes,
+    img: [
+      ...(defaultSchema.attributes?.img ?? []),
+      "src",
+      "alt",
+      "title",
+      "width",
+      "height",
+    ],
     blockquote: [
       ...(defaultSchema.attributes?.blockquote ?? []),
       "dataBlueskyUri",
@@ -66,8 +76,10 @@ const MARKDOWN_COMPONENTS: Components = {
       </code>
     );
   },
-  p: (props) => (
-    <p className="leading-7 [&:not(:first-child)]:mt-6" {...props} />
+  p: ({ children, node: _, ...props }) => (
+    <p className="leading-7 [&:not(:first-child)]:mt-6" {...props}>
+      {children}
+    </p>
   ),
 
   h1: ({ children }) => <h1 className="scroll-mt-20">{children}</h1>,
@@ -96,6 +108,24 @@ const MARKDOWN_COMPONENTS: Components = {
       );
     }
     return <section>{children}</section>;
+  },
+
+  img: ({ src, alt, node: _, ...props }) => {
+    if (!src) return null;
+    return (
+      <span className="block my-6">
+        <Image
+          src={src}
+          alt={alt || ""}
+          width={1200}
+          height={630}
+          className="w-full h-auto max-h-[600px] rounded-lg object-contain mx-auto"
+          quality={90}
+          unoptimized
+          {...props}
+        />
+      </span>
+    );
   },
 };
 
