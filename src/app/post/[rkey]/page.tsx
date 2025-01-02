@@ -76,7 +76,7 @@ const MARKDOWN_COMPONENTS: Components = {
       </code>
     );
   },
-  p: ({ children, node: _, ...props }) => (
+  p: ({ children, ...props }) => (
     <p className="leading-7 [&:not(:first-child)]:mt-6" {...props}>
       {children}
     </p>
@@ -110,7 +110,7 @@ const MARKDOWN_COMPONENTS: Components = {
     return <section>{children}</section>;
   },
 
-  img: ({ src, alt, node: _, ...props }) => {
+  img: ({ src, alt, ...props }) => {
     if (!src) return null;
     return (
       <span className="block my-6">
